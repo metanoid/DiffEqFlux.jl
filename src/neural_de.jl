@@ -291,7 +291,7 @@ function (n::NeuralODEMM)(x,p=n.p)
         alg_out = n.constraints_model(u,p,t)
         vcat(nn_out,alg_out)
     end
-    dudt_= ODEFunction{false}(f,mass_matrix=n.mass_matrix)
+    dudt_= ODEFunction{false}(f,mass_matrix=n.mass_matrix,tgrad=basic_tgrad)
     prob = ODEProblem{false}(dudt_,x,n.tspan,p)
     concrete_solve(prob,n.solver,x,p,n.args...;n.kwargs...)
 end
@@ -302,7 +302,7 @@ function (n::NeuralODEMM{M})(x,p=n.p) where {M<:FastChain}
         alg_out = n.constraints_model(u,p,t)
         vcat(nn_out,alg_out)
     end
-    dudt_= ODEFunction{false}(f;mass_matrix=n.mass_matrix)
+    dudt_= ODEFunction{false}(f;mass_matrix=n.mass_matrix,tgrad=basic_tgrad)
     prob = ODEProblem{false}(dudt_,x,n.tspan,p)
     concrete_solve(prob,n.solver,x,p,n.args...;
                    sensealg=InterpolatingAdjoint(
